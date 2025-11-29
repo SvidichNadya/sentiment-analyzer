@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analyzer | Анализ тональности отзывов</title>
+
+    <!-- Google Fonts для современного стиля -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN для быстрого и современного UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico">
+
+    <!-- Meta tags для SEO и PWA -->
+    <meta name="description" content="Платформа для анализа тональности отзывов жителей Москвы. Классификация текстов: отрицательная, нейтральная, положительная.">
+</head>
+<body class="bg-gray-50 font-inter text-gray-800 min-h-screen flex flex-col">
+
+    <!-- ------------------------- Header ------------------------- -->
+    <header class="bg-white shadow-md py-4 px-6 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-indigo-600">Sentiment Analyzer</h1>
+        <nav class="space-x-4">
+            <a href="#upload" class="text-gray-700 hover:text-indigo-600 font-medium">Загрузка CSV</a>
+            <a href="#results" class="text-gray-700 hover:text-indigo-600 font-medium">Результаты</a>
+            <a href="#dashboard" class="text-gray-700 hover:text-indigo-600 font-medium">Дашборд</a>
+        </nav>
+    </header>
+
+    <!-- ------------------------- Hero Section ------------------------- -->
+    <section class="flex flex-col items-center justify-center py-16 px-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white text-center">
+        <h2 class="text-4xl md:text-5xl font-extrabold mb-4">Анализ тональности отзывов</h2>
+        <p class="text-lg md:text-xl max-w-2xl mb-6">Автоматическая классификация отзывов жителей по эмоциональной окраске: отрицательная, нейтральная, положительная. Получайте мгновенную аналитику и визуализацию данных.</p>
+        <a href="#upload" class="px-6 py-3 bg-white text-indigo-600 font-semibold rounded-lg shadow hover:bg-gray-100 transition">Начать</a>
+    </section>
+
+    <!-- ------------------------- Upload CSV Section ------------------------- -->
+    <section id="upload" class="py-12 px-4 md:px-16 bg-gray-50 flex flex-col items-center">
+        <h3 class="text-3xl font-bold text-gray-800 mb-6">Загрузите CSV с отзывами</h3>
+        <p class="text-gray-600 mb-4">Формат: CSV с колонками <strong>text</strong>, <strong>label</strong> (если есть), <strong>src</strong>.</p>
+        <div class="w-full max-w-xl">
+            <input type="file" id="csvFileInput" class="block w-full text-sm text-gray-500
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-full file:border-0
+                file:text-sm file:font-semibold
+                file:bg-indigo-600 file:text-white
+                hover:file:bg-indigo-500
+                cursor-pointer
+                mb-4" accept=".csv">
+
+            <button id="uploadBtn" class="w-full bg-indigo-600 text-white py-3 font-semibold rounded-lg shadow hover:bg-indigo-500 transition">Загрузить и проанализировать</button>
+        </div>
+        <p id="uploadStatus" class="mt-4 text-gray-600"></p>
+    </section>
+
+    <!-- ------------------------- Results Section ------------------------- -->
+    <section id="results" class="py-12 px-4 md:px-16 bg-white flex flex-col items-center">
+        <h3 class="text-3xl font-bold text-gray-800 mb-6">Результаты анализа</h3>
+        <div id="resultsTableContainer" class="w-full max-w-4xl overflow-x-auto shadow rounded-lg"></div>
+    </section>
+
+    <!-- ------------------------- Dashboard Section ------------------------- -->
+    <section id="dashboard" class="py-12 px-4 md:px-16 bg-gray-50 flex flex-col items-center">
+        <h3 class="text-3xl font-bold text-gray-800 mb-6">Дашборд визуализации</h3>
+        <div id="chartsContainer" class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Здесь будут динамические графики (Chart.js / Recharts / D3) -->
+        </div>
+    </section>
+
+    <!-- ------------------------- Footer ------------------------- -->
+    <footer class="bg-white shadow-inner py-6 px-6 mt-auto text-center text-gray-600 text-sm">
+        &copy; 2025 Sentiment Analyzer. Все права защищены. | Разработано для стажировки IT-город, mos.ru
+    </footer>
+
+    <!-- ------------------------- Scripts ------------------------- -->
+    <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>

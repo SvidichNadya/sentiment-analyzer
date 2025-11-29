@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: sentiment-backend
+    restart: unless-stopped
+    env_file:
+      - ../backend/.env
+    volumes:
+      - backend_data:/app/data
+      - backend_models:/app/models
+    ports:
+      - "8000:8000"
+    networks:
+      - sentiment-net
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: sentiment-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80" # внешний порт 3000 → Nginx 80
+    depends_on:
+      - backend
+    networks:
+      - sentiment-net
+
+volumes:
+  backend_data:
+    driver: local
+  backend_models:
+    driver: local
+
+networks:
+  sentiment-net:
+    driver: bridge

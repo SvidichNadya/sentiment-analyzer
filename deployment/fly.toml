@@ -1,0 +1,53 @@
+# Fly.io configuration file
+app = "sentiment-platform"
+primary_region = "fra"  # можно изменить на ближайший регион
+
+[env]
+ENV = "production"
+PORT = "8080"
+
+# -------------------------
+# Backend service (FastAPI)
+# -------------------------
+[[services]]
+internal_port = 8000
+protocol = "tcp"
+
+  [[services.ports]]
+  port = 80  # внешний порт
+  handlers = ["http"]
+
+  [[services.ports]]
+  port = 443
+  handlers = ["tls", "http"]
+
+  [[services.tcp_checks]]
+  interval = 10000
+  timeout = 2000
+  grace_period = 10000
+  restart_limit = 0
+
+# -------------------------
+# Frontend service (React SPA)
+# -------------------------
+[build]
+  image = "node:20-alpine"  # используем Node для сборки
+  build_args = { 
+    NODE_ENV = "production"
+  }
+
+[[statics]]
+  guest_path = "/usr/share/nginx/html"
+  url_prefix = "/"
+
+[[services]]
+internal_port = 80
+protocol = "tcp"
+
+  [[services.ports]]
+  port = 80
+  handlers = ["http"]
+
+  [[services.ports]]
+  port = 443
+  handlers = ["tls","http"]

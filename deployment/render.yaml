@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: sentiment-backend
+    env: docker
+    dockerfilePath: ../backend/Dockerfile
+    branch: main
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: ENV
+        value: production
+      - key: PORT
+        value: "8000"
+    healthCheckPath: /api/health
+    # Чтобы Render ждал пока контейнер готов к запросам
+    healthCheckIntervalSeconds: 15
+
+  - type: web
+    name: sentiment-frontend
+    env: docker
+    dockerfilePath: ../frontend/Dockerfile
+    branch: main
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: REACT_APP_API_URL
+        value: "https://sentiment-backend.onrender.com/api"
+    healthCheckPath: /
+    # Настройка Build и Start команд (опционально)
+    buildCommand: "npm install && npm run build"
+    startCommand: "nginx -g 'daemon off;'"

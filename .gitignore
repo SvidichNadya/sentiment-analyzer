@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+*.egg-info/
+dist/
+build/
+*.sqlite3
+
+# Python virtual environment
+venv/
+env/
+
+# PyTorch / ML artifacts
+*.pt
+*.pth
+*.ckpt
+*.log
+*.tensorboard/
+
+# Node / Frontend
+node_modules/
+npm-debug.log*
+yarn-error.log*
+dist/
+.vite/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker
+*.dockerfile
+docker-compose.override.yml
+*.log
+
+# IDEs
+.vscode/
+.idea/
+
+# Deployment
+/deployment/.fly/
+deployment/*.secret
