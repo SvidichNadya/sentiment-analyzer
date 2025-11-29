@@ -1,14 +1,14 @@
-# backend/app/ml/model.py
-
 import os
+from typing import List, Optional, Dict
+
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
-from typing import List, Optional, Dict
 
 from .dataset import TextDataset
 from .metrics import compute_metrics
 from ..utils.logger import get_logger
+from .. import config
 
 logger = get_logger(__name__)
 
@@ -39,23 +39,25 @@ class SentimentModel(nn.Module):
 
 class ModelHandler:
     def __init__(self, model: nn.Module, device: Optional[str] = None):
-        self.model = model
-        self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
-        self.model.to(self.device)
+        # Используем DEVICE из config.py, если device не передан
+        self.device = device or config.settings.DEVICE or ("cuda" if torch.cuda.is_available() else "cpu")
+        self.model = model.to(self.device)
         self.model.eval()
         logger.info(f"ModelHandler инициализирован. Device={self.device}")
 
     # ----------------------------------------------------
     # Сохранение модели
     # ----------------------------------------------------
-    def save_model(self, path: str):
+    def save_model(self, path: Optional[str] = None):
+        path = path or os.environ.get("MODEL_PATH", str(config.settings.MODELS_DIR / "trained_model.pt"))
         torch.save(self.model.state_dict(), path)
         logger.info(f"Модель сохранена: {path}")
 
     # ----------------------------------------------------
     # Загрузка модели
     # ----------------------------------------------------
-    def load_model(self, path: str):
+    def load_model(self, path: Optional[str] = None):
+        path = path or os.environ.get("MODEL_PATH", str(config.settings.MODELS_DIR / "trained_model.pt"))
         self.model.load_state_dict(torch.load(path, map_location=self.device))
         self.model.to(self.device)
         self.model.eval()

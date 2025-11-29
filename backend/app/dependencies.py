@@ -1,5 +1,3 @@
-# backend/app/dependencies.py
-
 import time
 import asyncio
 from functools import lru_cache
@@ -14,12 +12,10 @@ from .core.normalizer import TextNormalizer
 from .core.search_engine import SearchEngine
 from .ml.model import SentimentModel
 
-
 # -------------------------
 # Глобальный логгер
 # -------------------------
 logger = get_logger(__name__)
-
 
 # -------------------------
 # Lazy-кэш для модели
@@ -43,7 +39,6 @@ class ModelContainer:
 
 container = ModelContainer()
 
-
 # -------------------------
 # Инициализация кэша (Redis или in-memory)
 # -------------------------
@@ -66,10 +61,9 @@ class LocalCache:
 
 if settings.USE_REDIS_CACHE:
     import redis.asyncio as redis
-    redis_client = redis.from_url(settings.REDIS_URL)
+    redis_client = redis.from_url(os.environ.get("REDIS_URL", settings.REDIS_URL))
 else:
     redis_client = LocalCache()
-
 
 # -------------------------
 # Rate Limiting (MVP)
@@ -121,7 +115,6 @@ async def rate_limit_dependency(request: Request):
     """Подключается как Depends() в публичных ручках."""
     await rate_limiter.check(request)
 
-
 # -------------------------
 # Загрузка модели и NLP-пайплайна
 # -------------------------
@@ -146,13 +139,16 @@ def load_pipeline():
     # Препроцессинг (очистка, токены)
     preprocessor = Preprocessor(normalizer=normalizer)
 
-    # Модель тональности
+    # Модель тональности с поддержкой ENV-переменных
+    model_path = os.environ.get("MODEL_PATH", settings.MODEL_PATH)
+    tokenizer_path = os.environ.get("TOKENIZER_PATH", settings.TOKENIZER_PATH)
+
     model = SentimentModel(
-        model_path=settings.MODEL_PATH,
-        tokenizer_path=settings.TOKENIZER_PATH,
-        device=settings.DEVICE,
-        max_length=settings.MAX_SEQ_LENGTH,
-        confidence_threshold=settings.CONFIDENCE_THRESHOLD,
+        model_path=model_path,
+        tokenizer_path=tokenizer_path,
+        device=os.environ.get("DEVICE", settings.DEVICE),
+        max_length=int(os.environ.get("MAX_SEQ_LENGTH", settings.MAX_SEQ_LENGTH)),
+        confidence_threshold=float(os.environ.get("CONFIDENCE_THRESHOLD", settings.CONFIDENCE_THRESHOLD)),
     )
 
     # Поисковый индекс
@@ -184,7 +180,6 @@ def init_container():
     container.search_engine = assets["search_engine"]
 
     logger.info("Глобальный контейнер NLP-пайплайна инициализирован.")
-
 
 # -------------------------
 # Dependencies для FastAPI
@@ -222,7 +217,6 @@ def get_cache():
 
 def get_logger_dep():
     return logger
-
 
 # -------------------------
 # Health check зависимости

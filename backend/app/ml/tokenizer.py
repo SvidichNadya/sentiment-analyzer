@@ -1,11 +1,10 @@
-# backend/app/ml/tokenizer.py
-
 from typing import List, Dict
 import json
 import os
 
 from ..core.normalizer import Normalizer
 from ..utils.logger import get_logger
+from .. import config
 
 logger = get_logger(__name__)
 
@@ -23,11 +22,17 @@ class Tokenizer:
 
     def __init__(self, vocab_path: str = None, remove_stopwords: bool = False):
         self.normalizer = Normalizer(remove_stopwords=remove_stopwords)
+
+        # Используем ENV-переменную VOCAB_PATH или путь из config, если не передан
+        self.vocab_path = vocab_path or os.environ.get(
+            "VOCAB_PATH", str(config.settings.MODELS_DIR / "vocab.json")
+        )
+
         self.vocab: Dict[str, int] = {}
-        self.vocab_path = vocab_path
-        if vocab_path and os.path.exists(vocab_path):
-            self.load_vocab(vocab_path)
-        logger.info(f"Tokenizer инициализирован. vocab_path={vocab_path}")
+        if self.vocab_path and os.path.exists(self.vocab_path):
+            self.load_vocab(self.vocab_path)
+
+        logger.info(f"Tokenizer инициализирован. vocab_path={self.vocab_path}")
 
     # ----------------------------------------------------
     # Создание словаря по списку текстов
